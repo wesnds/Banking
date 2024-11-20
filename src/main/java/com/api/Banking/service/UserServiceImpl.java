@@ -2,8 +2,11 @@ package com.api.Banking.service;
 
 import com.api.Banking.dto.AccountInfo;
 import com.api.Banking.dto.BankResponse;
+import com.api.Banking.dto.EmailDetails;
 import com.api.Banking.dto.UserRequest;
 import com.api.Banking.entity.User;
+import com.api.Banking.interfaces.EmailService;
+import com.api.Banking.interfaces.UserService;
 import com.api.Banking.repository.UserRepository;
 import com.api.Banking.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
@@ -43,6 +49,17 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User savedUser = userRepository.save(newUser);
+        //send email alert
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("ACCOUNT CREATION")
+                .messageBody("Congrats! Your account has been successfully created\n " +
+                        "Your account details: \n" +
+                        "Account name: " + savedUser.getFirstName() + " " + savedUser.getLastName() + "\n" +
+                        "Account number: " + savedUser.getAccountNumber()
+                )
+                .build();
+        emailService.sendEmailAlert(emailDetails);
 
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATED_SUCESS)
