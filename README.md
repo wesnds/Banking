@@ -1,7 +1,8 @@
 # Banking Application with Java Spring Boot
   - Lombok
-  - JPA
   - Spring Web
+  - [Spring Starter Mail](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail)
+  - JPA
   - MySQL
   - Swagger
 
