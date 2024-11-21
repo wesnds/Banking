@@ -1,6 +1,7 @@
 package com.api.Banking.controller;
 
 import com.api.Banking.dto.BankResponse;
+import com.api.Banking.dto.EnquiryRequest;
 import com.api.Banking.dto.UserRequest;
 import com.api.Banking.service.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -25,6 +26,16 @@ public class UserController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getAccountInfo().getAccountName()).toUri();
 
         return ResponseEntity.created(uri).body(createdUser);
+    }
+
+    @GetMapping("name-enquiry")
+    public String nameEnquiry(@RequestBody EnquiryRequest enquiryRequest){
+        return userService.nameEnquiry(enquiryRequest);
+    }
+
+    @GetMapping("balance-enquiry")
+    public BankResponse balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest){
+        return userService.balanceEnquiry(enquiryRequest);
     }
 
 }

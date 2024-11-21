@@ -1,9 +1,6 @@
 package com.api.Banking.service;
 
-import com.api.Banking.dto.AccountInfo;
-import com.api.Banking.dto.BankResponse;
-import com.api.Banking.dto.EmailDetails;
-import com.api.Banking.dto.UserRequest;
+import com.api.Banking.dto.*;
 import com.api.Banking.entity.User;
 import com.api.Banking.interfaces.EmailService;
 import com.api.Banking.interfaces.UserService;
@@ -71,4 +68,45 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .build();
     }
+
+    @Override
+    public BankResponse balanceEnquiry(EnquiryRequest enquiryRequest) {
+        boolean accountExist = userRepository.existsByAccountNumber(enquiryRequest.getAccountNumber());
+        if(!accountExist){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+        return BankResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_FOUND_SUCCESS)
+                .accountInfo(AccountInfo.builder()
+                        .accountBalance(foundUser.getAccountBalance())
+                        .accountNumber(enquiryRequest.getAccountNumber())
+                        .accountName(foundUser.getFirstName() + " " + foundUser.getLastName())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public String nameEnquiry(EnquiryRequest enquiryRequest) {
+        boolean accountExist = userRepository.existsByAccountNumber(enquiryRequest.getAccountNumber());
+        if(!accountExist){
+           return AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE;
+        }
+
+        User foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+        return foundUser.getFirstName() + " " + foundUser.getLastName();
+    }
+
+    @Override
+    public BankResponse creditAccount(CreditDebitRequest creditDebitRequest) {
+        return null;
+    }
+
+
 }
