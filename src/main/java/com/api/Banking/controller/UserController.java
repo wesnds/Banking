@@ -1,6 +1,7 @@
 package com.api.Banking.controller;
 
 import com.api.Banking.dto.BankResponse;
+import com.api.Banking.dto.CreditDebitRequest;
 import com.api.Banking.dto.EnquiryRequest;
 import com.api.Banking.dto.UserRequest;
 import com.api.Banking.service.UserServiceImpl;
@@ -38,4 +39,13 @@ public class UserController {
         return userService.balanceEnquiry(enquiryRequest);
     }
 
+    @PostMapping("credit")
+    public BankResponse creditAccount(@RequestBody CreditDebitRequest request){
+        return userService.creditAccount(request);
+    }
+
+    @PostMapping("debit")
+    public BankResponse debitAccount(@RequestBody CreditDebitRequest request){
+        return userService.debitAccount(request);
+    }
 }
