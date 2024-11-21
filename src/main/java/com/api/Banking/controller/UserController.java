@@ -1,11 +1,7 @@
 package com.api.Banking.controller;
 
-import com.api.Banking.dto.BankResponse;
-import com.api.Banking.dto.CreditDebitRequest;
-import com.api.Banking.dto.EnquiryRequest;
-import com.api.Banking.dto.UserRequest;
+import com.api.Banking.dto.*;
 import com.api.Banking.service.UserServiceImpl;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +18,7 @@ public class UserController {
 
 
     @PostMapping("new-user")
-    public ResponseEntity<BankResponse> createAccount(@Valid @RequestBody UserRequest userRequest){
+    public ResponseEntity<BankResponse> createAccount( @RequestBody UserRequest userRequest){
        BankResponse createdUser = userService.createAccount(userRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getAccountInfo().getAccountName()).toUri();
 
@@ -47,5 +43,10 @@ public class UserController {
     @PostMapping("debit")
     public BankResponse debitAccount(@RequestBody CreditDebitRequest request){
         return userService.debitAccount(request);
+    }
+
+    @PostMapping("transfer")
+    public BankResponse transfer(@RequestBody TransferRequest transferRequest){
+        return userService.transfer(transferRequest);
     }
 }

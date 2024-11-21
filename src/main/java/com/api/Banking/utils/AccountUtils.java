@@ -20,10 +20,11 @@ public class AccountUtils {
     public static final String INSUFFICIENT_BALANCE_MESSAGE = "Insufficient Balance";
     public static final String ACCOUNT_DEBITED_SUCCESS = "007";
     public static final String ACCOUNT_DEBITED_MESSAGE = "Account has been successfully debited";
-
+    public static final String TRANSFER_SUCCESS_CODE = "008";
+    public static final String TRANSFER_SUCCESS_MESSAGE = "Transfer Successful!";
 
     //    method to handle the creation of account number
-//    account number takes the current year + random six digits
+    //    account number takes the current year + random six digits
     public static @NotNull String generateAccountNumber(){
         Year currentYear = Year.now();
         int min = 100000;
