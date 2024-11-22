@@ -17,6 +17,9 @@ public class UserServiceImpl {
     private UserRepository userRepository;
 
     @Autowired
+    TransactionService transactionService;
+
+    @Autowired
     EmailServiceImpl emailService;
 
     public BankResponse createAccount(UserRequest userRequest) {
@@ -95,8 +98,8 @@ public class UserServiceImpl {
            return AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE;
         }
 
-        User foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
-        return foundUser.getFirstName() + " " + foundUser.getLastName();
+        User user = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+        return user.getFirstName() + " " + user.getLastName();
     }
 
     public BankResponse creditAccount(CreditDebitRequest creditDebitRequest) {
@@ -112,6 +115,15 @@ public class UserServiceImpl {
         User userToCredit = userRepository.findByAccountNumber(creditDebitRequest.getAccountNumber());
         userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(creditDebitRequest.getAmount()));
         userRepository.save(userToCredit);
+
+        //save transaction
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(userToCredit.getAccountNumber())
+                .transactionType("CREDIT")
+                .amount(creditDebitRequest.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDTO);
 
         return BankResponse.builder()
                 .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS)
@@ -147,6 +159,15 @@ public class UserServiceImpl {
         else {
             userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(creditDebitRequest.getAmount()));
             userRepository.save(userToDebit);
+
+            TransactionDTO transactionDTO = TransactionDTO.builder()
+                    .accountNumber(userToDebit.getAccountNumber())
+                    .transactionType("CREDIT")
+                    .amount(creditDebitRequest.getAmount())
+                    .build();
+
+            transactionService.saveTransaction(transactionDTO);
+
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
                     .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
@@ -173,7 +194,7 @@ public class UserServiceImpl {
         }
 
         User senderAccount = userRepository.findByAccountNumber(transferRequest.getSenderAccountNumber());
-        if(transferRequest.getAmount().compareTo(senderAccount.getAccountBalance()) < 0){
+        if(transferRequest.getAmount().compareTo(senderAccount.getAccountBalance()) > 0){
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
                     .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
@@ -183,6 +204,7 @@ public class UserServiceImpl {
 
         senderAccount.setAccountBalance(senderAccount.getAccountBalance().subtract(transferRequest.getAmount()));
         userRepository.save(senderAccount);
+
         EmailDetails debitAlert = EmailDetails.builder()
                 .subject("DEBIT ALERT")
                 .recipient(senderAccount.getEmail())
@@ -190,14 +212,24 @@ public class UserServiceImpl {
                 .build();
         emailService.sendEmailAlert(debitAlert);
 
-
         receiverAccount.setAccountBalance(senderAccount.getAccountBalance().add(transferRequest.getAmount()));
         userRepository.save(receiverAccount);
+
         EmailDetails creditAlert = EmailDetails.builder()
                 .subject("CREDIT ALERT")
                 .recipient(senderAccount.getEmail())
                 .messageBody(senderAccount.getFirstName() + " " + senderAccount.getLastName() + "Has transferred $" + transferRequest.getAmount() + " to your account! Your current balance is: $" + receiverAccount.getAccountBalance())
                 .build();
+        emailService.sendEmailAlert(creditAlert);
+
+        //save transfer
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(receiverAccount.getAccountNumber())
+                .transactionType("CREDIT")
+                .amount(transferRequest.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDTO);
 
         return BankResponse.builder()
                 .responseCode(AccountUtils.TRANSFER_SUCCESS_CODE)

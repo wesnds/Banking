@@ -12,12 +12,13 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountInfo {
-
-    @Schema(name = "User account name")
-    private String accountName;
-    @Schema(name = "User account balance")
-    private BigDecimal accountBalance;
+public class TransactionDTO {
+    @Schema(name = "Type of transaction")
+    private String transactionType;
     @Schema(name = "User account number")
     private String accountNumber;
+    @Schema(name = "Transaction status")
+    private String status;
+    @Schema(name = "Transaction amount")
+    private BigDecimal amount;
 }
