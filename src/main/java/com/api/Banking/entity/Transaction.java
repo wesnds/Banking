@@ -2,8 +2,11 @@ package com.api.Banking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,7 +22,11 @@ public class Transaction {
     private String transactionID;
 
     private String transactionType;
-    private String receiverAccountNumber;
+    private String accountNumber;
     private String status;
     private BigDecimal amount;
+    @CreationTimestamp
+    private LocalDate createdAt;
+    @UpdateTimestamp
+    private LocalDate modifiedAt;
 }
