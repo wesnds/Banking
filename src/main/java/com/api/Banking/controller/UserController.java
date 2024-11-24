@@ -1,7 +1,7 @@
 package com.api.Banking.controller;
 
 import com.api.Banking.dto.*;
-import com.api.Banking.service.UserServiceImpl;
+import com.api.Banking.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +18,7 @@ import java.net.URI;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Operation(
             summary = "Create new account",

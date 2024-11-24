@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Service
-public class UserServiceImpl {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -20,7 +20,7 @@ public class UserServiceImpl {
     TransactionService transactionService;
 
     @Autowired
-    EmailServiceImpl emailService;
+    EmailService emailService;
 
     public BankResponse createAccount(UserRequest userRequest) {
 

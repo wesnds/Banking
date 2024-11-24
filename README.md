@@ -39,4 +39,5 @@ O projeto ainda está em desenvolvimento e as próximas atualizações serão vo
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 - Você instalou a versão 17 do `jdk`
+- Você instalou o `docker` ou `docker desktop`
 - Você tem uma máquina `<Windows / Linux / Mac>`.

@@ -14,7 +14,7 @@ public class TransactionService {
     public void saveTransaction(TransactionDTO transactionDto){
         Transaction transaction = Transaction.builder()
                 .transactionType(transactionDto.getTransactionType())
-                .receiverAccountNumber(transactionDto.getAccountNumber())
+                .accountNumber(transactionDto.getAccountNumber())
                 .amount(transactionDto.getAmount())
                 .status("SUCCESS")
                 .build();
