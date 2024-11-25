@@ -30,8 +30,8 @@
 
 O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas para as seguintes tarefas:
 
-- [ ] Extratos bancários
-- [ ] Envio de extratos bancários via email
+- [X] Extratos bancários
+- [X] Envio de extratos bancários via email
 - [ ] Segurança com JWT
 
 ## 💻 Pré-requisitos
