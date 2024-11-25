@@ -27,4 +27,6 @@ public class UserRequest {
     private String address;
     @Schema(name = "User state of birth")
     private String stateOfOrigin;
+    @Schema(name = "User password")
+    private String password;
 }

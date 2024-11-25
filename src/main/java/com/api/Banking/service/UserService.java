@@ -1,16 +1,24 @@
 package com.api.Banking.service;
 
+import com.api.Banking.config.JwtTokenProvider;
 import com.api.Banking.dto.*;
+import com.api.Banking.entity.Enums.Role;
 import com.api.Banking.entity.User;
 import com.api.Banking.repository.UserRepository;
 import com.api.Banking.utils.AccountUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     @Autowired
@@ -21,6 +29,15 @@ public class UserService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     public BankResponse createAccount(UserRequest userRequest) {
 
@@ -42,8 +59,10 @@ public class UserService {
                 .address(userRequest.getAddress())
                 .stateOfOrigin(userRequest.getStateOfOrigin())
                 .status("ACTIVE")
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .accountBalance(BigDecimal.ZERO)
+                .role(Role.valueOf("ROLE_ADMIN"))
                 .build();
 
         User savedUser = userRepository.save(newUser);
@@ -67,6 +86,25 @@ public class UserService {
                         .accountNumber(savedUser.getAccountNumber())
                         .accountName(savedUser.getFirstName() + " " + savedUser.getLastName())
                         .build())
+                .build();
+    }
+
+    public BankResponse login(LoginDTO loginDTO){
+        Authentication authentication = null;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+        );
+
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("You're logged in!")
+                .recipient(loginDTO.getEmail())
+                .messageBody("You logged into your account. If you did not initiate this request, please contact your bank!")
+                .build();
+        emailService.sendEmailAlert(loginAlert);
+
+        return BankResponse.builder()
+                .responseCode("Login Success")
+                .responseMessage(jwtTokenProvider.generateToken(authentication))
                 .build();
     }
 

@@ -29,11 +29,21 @@ public class UserController {
             description = "HTTP Status 201 CREATED"
     )
     @PostMapping("new-user")
-    public ResponseEntity<BankResponse> createAccount( @RequestBody UserRequest userRequest){
-       BankResponse createdUser = userService.createAccount(userRequest);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getAccountInfo().getAccountName()).toUri();
+    public BankResponse createAccount( @RequestBody UserRequest userRequest){
+        return userService.createAccount(userRequest);
+    }
 
-        return ResponseEntity.created(uri).body(createdUser);
+    @Operation(
+            summary = "User login",
+            description = "user log in"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "HTTP Status 201 CREATED"
+    )
+    @PostMapping("/login")
+    public BankResponse login(@RequestBody LoginDTO loginDTO){
+        return userService.login(loginDTO);
     }
 
     @Operation(

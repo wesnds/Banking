@@ -28,11 +28,18 @@
 
 ### Ajustes e melhorias
 
+---
+
+#### A senha gerada é apenas para uso em desenvolvimento. Sua configuração de segurança deve ser atualizada antes de executar seu aplicativo em produção.
+
+---
+
 O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas para as seguintes tarefas:
 
 - [X] Extratos bancários
 - [X] Envio de extratos bancários via email
 - [ ] Segurança com JWT
+- [ ] 2FA
 
 ## 💻 Pré-requisitos
 
